@@ -1,17 +1,28 @@
 const Student = require("./Student");
 const express = require("express");
+const CookieParser = require("cookie-parser")
 const Jwtauthentication = require("./jwtauthentication");
 const { ValidationError, UnauthorizedError } = require("./errors");
 
 const application = express();
 application.use(express.json());
+application.use(CookieParser());
 
 const getAllStudents = (req, res, next) => {
   try {
+    const token = req.cookies.auth
+    console.log(token)
+    if(!token){
+      throw new UnauthorizedError("Unathorized")
+    }
+    if(!Jwtauthentication.isAdmin(token)){
+      throw new UnauthorizedError("Not a Admin")
+    }
+
     let allStudents = Student.allStudentList
     res.status(200).send(allStudents);
   } catch (error) {
-    
+    // console.log(error)
     res.status(error.httpStatusCode).send(error);
   }
 };
@@ -156,8 +167,8 @@ const studentLogin = (req, res, next) => {
     if (myStudent.password != password) {
       throw new UnauthorizedError("authentication failed");
     }
-    const token = Jwtauthentication.authenticate(myStudent.id, username, true);
-    console.log(token);
+    const token = Jwtauthentication.authenticate(myStudent.id, myStudent.username, false);
+    // console.log(token);
     res.cookie("auth", token);
     res.status(200).send(myStudent);
   } catch (error) {

@@ -20,5 +20,15 @@ class Jwtauthentication {
       throw error;
     }
   }
+
+  static verifyToken(token) {
+    let payload = jwt.verify(token, Jwtauthentication.secretKey);
+    return payload;
+  }
+
+  static isAdmin(token) {
+    let payload = Jwtauthentication.verifyToken(token)
+    return payload.isAdmin
+  }
 }
 module.exports = Jwtauthentication;
