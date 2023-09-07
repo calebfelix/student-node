@@ -1,3 +1,6 @@
+let {NotFoundError,
+  UnauthorizedError,
+  ValidationError } = require("./errors")
 class Student {
     static allStudentList = [];
     static id = 0;
@@ -15,7 +18,10 @@ class Student {
       finalGrade,
       yearOfEnrollment,
       yearOfPassing,
-      numbarOfYearsToGraduate
+      numbarOfYearsToGraduate,
+      username,
+      password,
+      isAdmin
     ) {
       this.id = id;
       this.firstName = firstName;
@@ -30,6 +36,9 @@ class Student {
       this.yearOfEnrollment = yearOfEnrollment;
       this.yearOfPassing = yearOfPassing;
       this.numbarOfYearsToGraduate = numbarOfYearsToGraduate;
+      this.username=username;
+      this.password=password;
+      this.isAdmin = isAdmin
     }
   
     static getAllStudents() {
@@ -54,7 +63,7 @@ class Student {
               return foundObject;
             }
           }
-          throw new Error("Not Found");
+          throw new NotFoundError("Not Found");
         } catch (error) {
           throw error;
         }
@@ -203,7 +212,9 @@ class Student {
       DOB,
       semesterCgpaArray,
       yearOfEnrollment,
-      yearOfPassing
+      yearOfPassing,
+      username,
+      password
     ) {
       //validation
       if (
@@ -252,10 +263,27 @@ class Student {
         newFinalGrade,
         yearOfEnrollment,
         yearOfPassing,
-        newNumbarOfYearsToGraduate
+        newNumbarOfYearsToGraduate,
+        username,
+        password,
+        false
       );
       Student.allStudentList.push(newStudent);
       return newStudent;
+    }
+
+    static findStudentByUsername(username) {
+      try {
+        for (let index = 0; index < Student.allStudentList.length; index++) {
+          if (Student.allStudentList[index].username === username) {
+            let foundObject = Student.allStudentList[index];
+            return foundObject;
+          }
+        }
+        throw new NotFoundError("User Not Found");
+      } catch (error) {
+        throw error;
+      }
     }
   }
   
@@ -264,31 +292,37 @@ class Student {
   /////////////////////////////////// Driver code CRUD ///////////////////////////////////
   
   // Create
-  student1 = Student.newStudent(
+  let student1 = Student.newStudent(
     "caleb",
     "felix",
     "11/05/2001",
     [8, 9, 2, 5, 6, 5, 7, 10],
     2019,
-    2023
+    2023,
+    "caleb",
+    "password"
   );
   
-  student2 = Student.newStudent(
+  let student2 = Student.newStudent(
     "john",
     "doe",
     "11/05/2002",
     [8, 9, 8, 5, 5, 8, 7, 10],
     2017,
-    2021
+    2021,
+    "john",
+    "password"
   );
   
-  student3 = Student.newStudent(
+  let student3 = Student.newStudent(
     "del",
     "del",
     "11/05/2002",
     [8, 9, 8, 5, 5, 8, 7, 10],
     2017,
-    2021
+    2021,
+    "del",
+    "password"
   );
   
   
